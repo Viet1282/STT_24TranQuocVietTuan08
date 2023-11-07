@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/core';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchNotes } from '../apis/notes.api';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function DisplayNote(route) {
     const navigation = useNavigation();
@@ -12,6 +12,13 @@ export default function DisplayNote(route) {
     const [data, setData] = useState([]);
     const [note, setNote] = useState({ title: '', content: '' })
     const id = route.route.params?.id;
+    
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         fetchNotes(id).then(setData)
+    //     }, [])
+    // )
+    
     useEffect(() => {
         fetchNotes(id).then(setData)
     }, [])
@@ -61,7 +68,14 @@ export default function DisplayNote(route) {
             <ScrollView style={{ width: '90%' }}>
                 {data.slice().reverse().map(item => {
                     return (
-                        <TouchableOpacity style={styles.OneNote}>
+                        <TouchableOpacity style={styles.OneNote} 
+                        onPress={()=>{
+                            // navigation.navigate('UpdateNote',item)
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'UpdateNote', params: { item: item }  }],
+                              });    
+                        }}>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Text style={{ width: '55%', fontSize: 20, fontWeight: '700' }}>{item.title}</Text>
                                 <Text style={{ width: '40%', fontSize: 15, fontWeight: 'normal' }} >{item.createdAt}</Text>
