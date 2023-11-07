@@ -21,7 +21,10 @@ export default function Login() {
             <TextInput onChangeText={(text) => setUser({...user,email:text})} value={user.email} style={{ height: 50, width: 300, border: 'solid 2px black', padding: 10 }} placeholder='email' autoFocus={true}></TextInput>
             <TextInput onChangeText={(text)=>setUser({...user,password:text})} value={user.password} style={{ height: 50, width: 300, border: 'solid 2px black', padding: 10 }} placeholder='password'></TextInput>
             <TouchableOpacity style={{}} onPress={()=>{
-                navigation.navigate('Signup');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Signup' }],
+                  }); 
             }}>
                 <Text style={{color:'blue',fontSize:15}}>SIGNUP</Text>
             </TouchableOpacity>

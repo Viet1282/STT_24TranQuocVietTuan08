@@ -8,6 +8,8 @@ export default function Signup() {
     const navigation = useNavigation();
     const [user, setUser] = useState({ email: '', password: '' })
     const [data, setData] = useState([]);
+    const [error, setError] = useState('')
+
 
     useEffect(() => {
         fetchUsers().then(setData);
@@ -16,30 +18,33 @@ export default function Signup() {
     console.log(user);
     const navigator = useNavigation();
 
-    
 
-    const handleSignup = () => {
+
+    async function handleSignup() {
         for (let d of data) {
             if (d.email === user.email) {
+                setError('Email already exists')
                 return;
             }
         }
-        fetch('https://6541275ff0b8287df1fded95.mockapi.io/api/v1/user/', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            // Send your data in the request body as JSON
-            body: JSON.stringify(user)
-        }).then(res => {
-            if (res.ok) {
-                return res.json();
+        try {
+            const response = await fetch('https://6541275ff0b8287df1fded95.mockapi.io/api/v1/user/', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                // Send your data in the request body as JSON
+                body: JSON.stringify(user)
+            })
+            if (response.ok) {
+                await response.json();
+                navigator.navigate('Login');
+            } else {
+                setError('Something went wrong')
             }
-            // handle error
-        }).then(task => {
-            // do something with the new task
-        }).catch(error => {
-            // handle error
-        })
-        navigator.navigate('Login');
+        }catch(error){
+            setError('Something went wrong')
+        }
+        
+
     }
 
     return (
@@ -56,6 +61,7 @@ export default function Signup() {
                 onPress={handleSignup}>
                 <Text style={{ color: 'white', fontSize: 20, fontWeight: '700' }}>SIGNUP</Text>
             </TouchableOpacity>
+            <Text style={{ color: 'red', fontSize: 15 }} >{error}</Text>
         </View>
     );
 }
